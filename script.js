@@ -1,12 +1,13 @@
 // Global variables ------------
 // form
 const itemForm = document.getElementById('item-form');
-
 // form input
 const itemInput = document.getElementById('item-input');
-
-// list
+// Item list
 const itemList = document.getElementById('item-list');
+
+// clear btn
+const clearbtn = document.getElementById('clear');
 
 // functions ----------------
 
@@ -50,9 +51,27 @@ function addItem(e) {
   //   add item list to DOM
   itemList.appendChild(li);
   console.log(li);
-
+  // reset input value
   itemInput.value = '';
 }
 
+// remove item >>>>>>>>>
+function removeItem(e) {
+  // targets cross icon
+  if (e.target.parentElement.classList.contains('remove-item')) {
+    e.target.parentElement.parentElement.remove();
+  }
+}
+
+// clear button >>>>>>
+function clearItems(e) {
+  while (itemList.firstChild) {
+    itemList.firstChild.removeChild(itemList.firstChild);
+  }
+}
+
 // event listeners ----------
+// add an item
 itemForm.addEventListener('submit', addItem);
+itemList.addEventListener('click', removeItem);
+clearbtn.addEventListener('click', clearItems);
