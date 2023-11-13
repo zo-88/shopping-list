@@ -28,8 +28,18 @@ function createIcon(classes) {
   return icon;
 }
 
+// load items from storage display on DOM>>>>>>>>>
+function displayItems() {
+  const itemsFromStorage = getItemsFromStorage();
+  // add items to DOM
+  itemsFromStorage.forEach((item) => {
+    addItemToDOM(item);
+    checkUI();
+  });
+}
+
 // create list item  >>>>>>>>>
-function addItem(e) {
+function onAddItemSubmit(e) {
   e.preventDefault();
 
   const newItem = itemInput.value;
@@ -39,24 +49,55 @@ function addItem(e) {
     alert('Please add an item');
     return;
   }
+  // create item DOM element
+  addItemToDOM(newItem);
+  // add item to local storage
+  addItemToStorage(newItem);
+  checkUI();
+  // reset input value
+  itemInput.value = '';
+}
+
+// add item to DOM >>>>>>>>
+function addItemToDOM(item) {
   //   create list item with value input
   const li = document.createElement('li');
-  li.appendChild(document.createTextNode(newItem));
+  li.appendChild(document.createTextNode(item));
 
   //   create button
   const button = createButton('remove-item btn-link text-red');
   //   add button to li item
   li.appendChild(button);
   console.log(li);
-
   //   add item list to DOM
   itemList.appendChild(li);
-  checkUI();
-
-  // reset input value
-  itemInput.value = '';
 }
 
+// add item to storage >>>>>>>>
+function addItemToStorage(item) {
+  const itemsFromStorage = getItemsFromStorage();
+
+  // add new item to an array
+  itemsFromStorage.push(item);
+
+  // convert to JSON string and set to local storage
+  localStorage.setItem('items', JSON.stringify(itemsFromStorage));
+}
+
+// get items from storage
+function getItemsFromStorage() {
+  let itemsFromStorage;
+
+  if (localStorage.getItem('items') === null) {
+    itemsFromStorage = [];
+  } else {
+    itemsFromStorage = JSON.parse(localStorage.getItem('items'));
+  }
+  return itemsFromStorage;
+}
+// ________________________________
+// removing items
+// -----------------------
 // remove item >>>>>>>>>
 function removeItem(e) {
   // targets cross icon
@@ -75,6 +116,8 @@ function clearItems() {
   }
   checkUI();
 }
+
+// ________________________________
 
 // filters items >>>>>>
 function filterItems(e) {
@@ -108,11 +151,22 @@ function checkUI() {
   }
 }
 
-// event listeners ----------
-// add an item
-itemForm.addEventListener('submit', addItem);
-itemList.addEventListener('click', removeItem);
-clearbtn.addEventListener('click', clearItems);
-itemFilter.addEventListener('input', filterItems);
+// Initialize app
+function init() {
+  // event listeners ----------
+  // add an item
+  itemForm.addEventListener('submit', onAddItemSubmit);
+  // remove item
+  itemList.addEventListener('click', removeItem);
+  // clear all items
+  clearbtn.addEventListener('click', clearItems);
+  // filter items
+  itemFilter.addEventListener('input', filterItems);
+  // load items in storage if available
+  document
+    .addEventListener('DOMContentLoaded', displayItems)
+    // check items then toggle filter & clear display
+    .checkUI();
+}
 
-checkUI();
+init();
