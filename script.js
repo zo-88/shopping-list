@@ -76,6 +76,25 @@ function clearItems() {
   checkUI();
 }
 
+// filters items >>>>>>
+function filterItems(e) {
+  const items = itemList.querySelectorAll('li');
+  const text = e.target.value.toLowerCase();
+  console.log(text);
+  // loop through items
+  items.forEach((item) => {
+    // text content of item
+    const itemName = item.firstChild.textContent.toLowerCase();
+    // match item with input in filter
+    if (itemName.indexOf(text) !== -1) {
+      // display matching items
+      item.style.display = 'flex';
+    } else {
+      item.style.display = 'none';
+    }
+  });
+}
+
 // check items / state >>>>>>>
 function checkUI() {
   // list items node
@@ -94,5 +113,6 @@ function checkUI() {
 itemForm.addEventListener('submit', addItem);
 itemList.addEventListener('click', removeItem);
 clearbtn.addEventListener('click', clearItems);
+itemFilter.addEventListener('input', filterItems);
 
 checkUI();
