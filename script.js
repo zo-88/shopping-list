@@ -59,14 +59,17 @@ function onAddItemSubmit(e) {
     const itemToEdit = itemList.querySelector('.edit-mode');
     // remove from local storage
     removeItemFromStorage(itemToEdit.textContent);
-
     // remove class
     itemToEdit.classList.remove('edit-mode');
     // remove from DOM
     itemToEdit.remove();
-
     // turn off edit mode
     isEditMode = false;
+  } else {
+    if (checkIfItemExists(newItem)) {
+      alert('That item already has been added');
+      return;
+    }
   }
 
   // create item DOM element
@@ -228,6 +231,16 @@ function checkUI() {
   isEditMode = false;
 }
 
+// check for duplicates >>>>>>>>
+function checkIfItemExists(item) {
+  // get items from local storage
+  const itemsFromStorage = getItemsFromStorage();
+
+  // check if it exists
+  return itemsFromStorage.includes(item);
+}
+
+// ________________________________________
 // Initialize app initalizing all eventlisteners >>>>>>>>>>>>>>>
 function init() {
   // event listeners ----------
