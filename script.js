@@ -9,6 +9,10 @@ const itemList = document.getElementById('item-list');
 const clearbtn = document.getElementById('clear');
 // item filter
 const itemFilter = document.getElementById('filter');
+// form button
+const formBtn = itemForm.querySelector('button');
+// boolean for editing mode
+let isEditMode = false;
 
 // functions ----------------
 
@@ -95,17 +99,67 @@ function getItemsFromStorage() {
   }
   return itemsFromStorage;
 }
-// ________________________________
+
+// -------------------------------------
+// ------ handler function -------------------
+
+// on clicking an item handler -----
+// checks which item was clicked >>>>>>>>>>
+function onClickItem(e) {
+  // checking to see if it is the delete button
+  if (e.target.parentElement.classList.contains('remove-item')) {
+    // if it is the delete button
+    // remove parent element of button > li
+    removeItem(e.target.parentElement.parentElement);
+  } else {
+    setItemToEdit(e.target);
+  }
+}
+// ____________________________________________
+
+// -------------------------------------------
+// ------- editing items functions ----------
+function setItemToEdit(item) {
+  isEditMode = true;
+  itemList
+    .querySelectorAll('li')
+    .forEach((i) => i.classList.remove('edit-mode'));
+
+  // change style for edit mode
+  item.classList.add('edit-mode');
+  // change add item button to edit
+  formBtn.innerHTML = '<i class = "fa-solid fa-pen"></i> Update Item';
+  formBtn.style.backgroundColor = '#228B22';
+  itemInput.value = item.textContent;
+}
+
+// __________________________________________
+
+//-------------------------------
 // removing items
 // -----------------------
+
+// removes item from storage >>>>>>>>.
+function removeItemFromStorage(item) {
+  let itemsFromStorage = getItemsFromStorage();
+
+  // filter out item to be removed
+  itemsFromStorage = itemsFromStorage.filter((i) => i !== item);
+
+  // re-set to localstorage
+  localStorage.setItem('items', JSON.stringify(itemsFromStorage));
+}
+
 // remove item >>>>>>>>>
-function removeItem(e) {
-  // targets cross icon
-  if (e.target.parentElement.classList.contains('remove-item')) {
-    if (confirm('Are you sure?')) {
-      e.target.parentElement.parentElement.remove();
-      checkUI();
-    }
+function removeItem(item) {
+  if (confirm('Are you sure?')) {
+    // removes item from DOM
+    item.remove();
+
+    // calls function to removes item from Storage
+    removeItemFromStorage(item.textContent);
+
+    checkUI();
   }
 }
 
@@ -114,6 +168,8 @@ function clearItems() {
   while (itemList.firstChild) {
     itemList.removeChild(itemList.firstChild);
   }
+  // clear from local storage
+  localStorage.removeItem('items');
   checkUI();
 }
 
@@ -151,13 +207,13 @@ function checkUI() {
   }
 }
 
-// Initialize app
+// Initialize app initalizing all eventlisteners >>>>>>>>>>>>>>>
 function init() {
   // event listeners ----------
   // add an item
   itemForm.addEventListener('submit', onAddItemSubmit);
   // remove item
-  itemList.addEventListener('click', removeItem);
+  itemList.addEventListener('click', onClickItem);
   // clear all items
   clearbtn.addEventListener('click', clearItems);
   // filter items

@@ -124,6 +124,10 @@ header h1 {
   cursor: pointer;
 }
 
+.edit-mode {
+  color: #ccc;
+}
+
 @media (max-width: 500px) {
   .items li {
     width: 100%;
